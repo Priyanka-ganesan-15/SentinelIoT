@@ -1,0 +1,3 @@
+# SentinelIoT
+
+Initial project structure.
