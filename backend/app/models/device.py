@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, String
+from sqlalchemy import Column, DateTime, Float, String, func
 
 from app.db.database import Base
 
@@ -14,3 +14,4 @@ class Device(Base):
     memory = Column(Float)
     battery = Column(Float)
     trust_score = Column(Float)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)

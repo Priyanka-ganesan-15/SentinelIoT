@@ -1,25 +1,24 @@
-type Device = {
-  id: string;
-  device_type: string;
-};
+import {
+  DevicesDashboardClient,
+  type Device,
+} from "@/components/devices-dashboard-client";
 
 export const dynamic = "force-dynamic";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
 type DevicesResult = {
   devices: Device[];
   error: string | null;
 };
 
-async function getDevices(): Promise<DevicesResult> {
-  const apiBaseUrl =
-    process.env.NEXT_PUBLIC_API_URL ?? process.env.API_URL ?? "http://127.0.0.1:8000";
-
+async function getInitialDevices(): Promise<DevicesResult> {
   try {
-    const response = await fetch(`${apiBaseUrl}/devices`, { cache: "no-store" });
+    const response = await fetch(`${API_BASE_URL}/devices`, { cache: "no-store" });
     if (!response.ok) {
       return {
         devices: [],
-        error: `Backend returned ${response.status}. Check API at ${apiBaseUrl}.`,
+        error: `Backend returned ${response.status}. Check API at ${API_BASE_URL}.`,
       };
     }
 
@@ -27,25 +26,19 @@ async function getDevices(): Promise<DevicesResult> {
   } catch {
     return {
       devices: [],
-      error: `Could not connect to backend at ${apiBaseUrl}. Start FastAPI server and try again.`,
+      error: `Could not connect to backend at ${API_BASE_URL}. Start FastAPI server and try again.`,
     };
   }
 }
 
 export default async function Page() {
-  const { devices, error } = await getDevices();
+  const { devices, error } = await getInitialDevices();
 
   return (
-    <div className="space-y-3">
-      <h1 className="text-xl font-semibold">Devices</h1>
-      {error ? (
-        <div className="rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-800">
-          {error}
-        </div>
-      ) : null}
-      <pre className="rounded-md border p-3 text-sm">
-        {JSON.stringify(devices, null, 2)}
-      </pre>
-    </div>
+    <DevicesDashboardClient
+      initialDevices={devices}
+      initialError={error}
+      apiBaseUrl={API_BASE_URL}
+    />
   );
 }

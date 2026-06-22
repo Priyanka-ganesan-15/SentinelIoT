@@ -14,7 +14,7 @@ app.add_middleware(
 	allow_headers=["*"],
 )
 
-app.include_router(devices_router, prefix="/devices", tags=["devices"])
+app.include_router(devices_router, tags=["devices"])
 
 
 @app.get("/")
